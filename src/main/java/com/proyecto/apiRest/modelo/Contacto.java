@@ -1,25 +1,41 @@
 package com.proyecto.apiRest.modelo;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Contacto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
-    private String nombre;
-    private String email;
-    private String telefono;
-    private LocalDate fechaNacimiento;
-    private LocalDate fechaRegistro;
 
-    public Contacto(Long id, String nombre, String email, String telefono, LocalDate fechaNacimiento, LocalDate fechaRegistro) {
+    @NotBlank(message = "Debe ingresar su nombre")
+    private String nombre;
+
+    @NotEmpty(message = "Debe ingresar su Email")
+    @Email
+    private String email;
+
+    @NotBlank(message = "Debe ingresar su celular")
+    private String telefono;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @Past
+    @NotNull(message = "Debe ingresar su fecha de Nacimiento  ")
+    private LocalDate fechaNacimiento;
+
+    private LocalDateTime fechaRegistro;
+
+    //esta anotacion sirve para agregarle la fecha actual y la hora actual a la vista
+    @PrePersist
+    public void asignarFechaRegistro(){
+        fechaRegistro = LocalDateTime.now();
+    }
+    public Contacto(Long id, String nombre, String email, String telefono, LocalDate fechaNacimiento, LocalDateTime fechaRegistro) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;
@@ -27,17 +43,10 @@ public class Contacto {
         this.fechaNacimiento = fechaNacimiento;
         this.fechaRegistro = fechaRegistro;
     }
-
-    public Contacto(String nombre, String email, String telefono, LocalDate fechaNacimiento, LocalDate fechaRegistro) {
-        this.nombre = nombre;
-        this.email = email;
-        this.telefono = telefono;
-        this.fechaNacimiento = fechaNacimiento;
-        this.fechaRegistro = fechaRegistro;
-    }
-
     public Contacto() {
     }
+
+
 
     public Long getId() {
         return id;
@@ -79,11 +88,11 @@ public class Contacto {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public LocalDate getFechaRegistro() {
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(LocalDate fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 }
